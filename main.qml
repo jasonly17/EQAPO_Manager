@@ -8,7 +8,6 @@ Rectangle {
 	visible: true
 
 	MouseArea {
-		id: moveWindow
 		anchors.fill: parent
 		z: 1
 

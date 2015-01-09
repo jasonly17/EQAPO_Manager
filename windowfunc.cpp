@@ -6,7 +6,7 @@ WindowFunc::WindowFunc(QCursor* cursor, QQuickView *view, QObject *parent) :
 }
 
 /* PUBLIC */
-// sets up window for moving
+// sets up the window for moving
 void WindowFunc::beginMoveWindow(int x, int y, int width, int height)
 {
 	lastGeometry = QRect(view->framePosition(), QSize(width, height));

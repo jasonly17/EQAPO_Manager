@@ -49,21 +49,28 @@ Rectangle {
 		Slider {
 			id: preampSlider
 			height: 22
-			tickmarksEnabled: false
 			stepSize: 0.1
 			orientation: Qt.Horizontal
 			maximumValue: 0
 			minimumValue: -30
+			value: 0
 			anchors.verticalCenter: powerButton.verticalCenter
 			anchors.right: preampValue.left
 			anchors.rightMargin: 10
 			anchors.left: preampLabel.right
 			anchors.leftMargin: 10
 			z: 1
+
+			onValueChanged: {
+				preampValue.user = false
+				preampValue.text = Math.round(preampSlider.value * 10) / 10
+				preampValue.user = true
+			}
 		}
 
 		TextField {
 			id: preampValue
+			property bool user: true
 			width: 40; height: 20
 			text: "0"
 			font.pointSize: 8
@@ -73,6 +80,13 @@ Rectangle {
 			anchors.right: preampdBLabel.left
 			anchors.rightMargin: 10
 			z: 1
+
+			onEditingFinished: {
+				if (preampValue.user){
+					preampValue.text = Math.max(-30, Math.min(0, preampValue.text))
+					preampSlider.value = Math.round(preampValue.text * 10) / 10
+				}
+			}
 		}
 
 		Label {
@@ -135,7 +149,9 @@ Rectangle {
 
 		ComboBox {
 			id: presetComboBox
+			objectName: "presetComboBox"
 			width: 250; height: 24
+			model: comboBoxModel
 			anchors.verticalCenter: presetLabel.verticalCenter
 			anchors.left: presetLabel.right
 			anchors.leftMargin: 10
@@ -267,6 +283,7 @@ Rectangle {
 
 		Row {
 			id: bandsGroup
+			objectName: "bandsGroup"
 			spacing: 8
 			anchors.bottom: frequencyLabel.top
 			anchors.bottomMargin: 10
@@ -280,7 +297,7 @@ Rectangle {
 			Repeater {
 				model: 20
 				BandSliderForm {
-
+					bandNum: index
 				}
 			}
 		}
@@ -302,8 +319,5 @@ Rectangle {
 			font.family: "Verdana"
 			textFormat: Text.PlainText
 		}
-
-
-
 	}
 }
