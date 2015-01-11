@@ -3,10 +3,11 @@ TEMPLATE = app
 QT += core qml quick
 
 SOURCES += main.cpp \
-    windowfunc.cpp \
     singleapplication.cpp \
     mainview.cpp \
-    guihandler.cpp
+    guihandler.cpp \
+	equalizerfuncs.cpp \
+    windowfuncs.cpp
 
 RESOURCES += qml.qrc \
     images.qrc
@@ -18,8 +19,9 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    windowfunc.h \
     singleapplication.h \
     mainview.h \
-    guihandler.h
+    guihandler.h \
+    equalizerfuncs.h \
+    windowfuncs.h
 

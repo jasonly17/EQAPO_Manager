@@ -1,21 +1,22 @@
 import QtQuick 2.4
 
-Row {
+Item {
 	id: windowButtons
 	property color baseColor: "#000000"
+	property bool disableMinimize: false
 	signal minimizeButtonClicked()
 	signal closeButtonClicked()
 	width: 56; height: 24
-	anchors.right: parent.right
-	anchors.top: parent.top
 
 	Rectangle {
 		id: minimizeButton
 		width: 28; height: parent.height
 		color: "#3665b3"
 		border.width: 0
-		z: 1
 		state: "NORMAL"
+		visible: !disableMinimize
+		anchors.right: closeButton.left
+		z: 1
 
 		Image {
 			id: minimizeButtonImg
@@ -61,8 +62,9 @@ Row {
 		width: 28; height: parent.height
 		color: "#00000000"
 		border.width: 0
-		z: 1
 		state: "NORMAL"
+		anchors.right: windowButtons.right
+		z: 1
 
 		Image {
 			id: closeButtonImg

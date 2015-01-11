@@ -3,15 +3,17 @@
 
 #include <QObject>
 #include <QStringListModel>
-#include <QQuickView>
+#include <QQuickWindow>
+
+#include "equalizerfuncs.h"
 
 class GuiHandler : public QObject
 {
 	Q_OBJECT
 public:
-	explicit GuiHandler(QQuickView *view, QObject *parent = 0);
+	explicit GuiHandler(QQuickWindow *window, QObject *parent = 0);
 
-	QObject *comboBox, *bandsGroup;
+	QObject *comboBox, *bands;
 
 	void load();
 
@@ -19,25 +21,25 @@ signals:
 	void changeCombo();
 
 public slots:
-	void on_powerToggled(bool checked);
-	void on_preampChanged(double value);
-	void on_comboChanged(const QString &text);
-	void on_resetButtonClicked();
-	void on_saveButtonClicked();
-	void on_deleteButtonClicked();
-	void on_bandVolumeChanged(int index, double value);
-	void on_bandFreqChanged(int index, double value);
+	void powerToggled(bool checked);
+	void preampChanged(double value);
+	void comboBoxChanged(const QString &text);
+	void resetButtonClicked();
+	void saveButtonClicked();
+	void deleteButtonClicked();
+	void bandChanged();
 
 private:
 	bool loaded, loading, sorting;
-	QQuickView *view;
-	QString configPath, activeConfig;
+	QQuickWindow *window;
+	EqualizerFuncs *eqFuncs;
+	QString configPath, activeConfig, lastConfig;
 	QStringList excludeConfigs, configList;
-	int preamp;
+	double preamp;
 
 	void loadEQFiles();
 	void loadSettings(bool setIndex = false);
-	void swapBand(int oldBandNum, int newBandNum);
+	QMap<int, QList<double> > getBandValues();
 };
 
 #endif // GUIHANDLER_H

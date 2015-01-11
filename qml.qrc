@@ -4,5 +4,9 @@
         <file>MainForm.qml</file>
         <file>BandSliderForm.qml</file>
         <file>WindowFunctions.qml</file>
+        <file>SaveDialog.qml</file>
+        <file>DeleteDialog.qml</file>
+        <file>OverwriteDialog.qml</file>
+        <file>MessageDialog.qml</file>
     </qresource>
 </RCC>

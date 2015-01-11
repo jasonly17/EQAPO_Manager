@@ -4,13 +4,13 @@ import QtQuick.Controls 1.3
 
 Item {
     id: band
-    signal valueChanged(int id, double value)
-    signal freqChanged(int id, double value)
+	signal volumeChanged()
+	signal freqChanged()
     property int bandNum: 0
     width: 42; height: 356
 
     Rectangle {
-        id: rectangle1
+		id: rectangle
         color: "#ffffff"
         visible: false
         anchors.fill: parent
@@ -18,7 +18,6 @@ Item {
 
     TextField {
         id: volumeValue
-        property bool user: true
         text: "0.0"
         font.pointSize: 8
         font.family: "Verdana"
@@ -31,7 +30,7 @@ Item {
         placeholderText: qsTr("")
 
         onEditingFinished: {
-            if (volumeValue.user){
+			if (volumeSlider.user){
                 volumeValue.text = Math.max(-20, Math.min(20, volumeValue.text))
                 volumeSlider.value = Math.round(volumeValue.text * 10) / 10
             }
@@ -40,6 +39,8 @@ Item {
 
     Slider {
         id: volumeSlider
+		objectName: "volumeSlider"
+		property bool user: true
         x: 0; y: 29
         width: 42; height: 300
         minimumValue: -20
@@ -76,15 +77,16 @@ Item {
         }
 
         onValueChanged: {
-            volumeValue.user = false
+			volumeSlider.user = false
             volumeValue.text = Math.round(volumeSlider.value * 10) / 10
-            band.valueChanged(bandNum, volumeValue.text)
-            volumeValue.user = true
+			band.volumeChanged()
+			volumeSlider.user = true
         }
     }
 
     TextField {
         id: freqValue
+		objectName: "freqValue"
         y: 8
         text: "0"
         font.pointSize: 8
@@ -97,6 +99,6 @@ Item {
         anchors.bottomMargin: 0
         placeholderText: qsTr("")
 
-        onTextChanged: band.freqChanged(bandNum, freqValue.text)
+		onTextChanged: band.freqChanged()
     }
 }

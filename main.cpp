@@ -1,12 +1,14 @@
 #include <QGuiApplication>
 #include <QCursor>
 #include <QQuickItem>
+#include <QQmlEngine>
+#include <QQmlComponent>
 #include <QQmlContext>
 #include <QDebug>
 
 #include "singleapplication.h"
 #include "mainview.h"
-#include "windowfunc.h"
+#include "windowfuncs.h"
 #include "guihandler.h"
 
 int main(int argc, char *argv[])
@@ -17,29 +19,55 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
+	QQmlEngine engine;
+	engine.rootContext()->setContextProperty("comboBoxModel", QStringList());
+	QQmlComponent mainComponent(&engine, QUrl("qrc:/main.qml"));
+	if (mainComponent.status() != mainComponent.Ready){
+		if (mainComponent.status() == mainComponent.Error){
+			qDebug() << mainComponent.errorString();
+		}
+	}
+	QQuickWindow *mainWindow = qobject_cast<QQuickWindow*>(mainComponent.create());
+	mainWindow->setTitle("Equalizer APO Manager");
+	mainWindow->setFlags(Qt::Window | Qt::FramelessWindowHint);
+	mainWindow->setIcon(QIcon(":/Resources/Icon.png"));
+
 	QCursor cursor;
-	MainView view;
-	view.setFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
-	view.setTitle("Equalizer APO Manager");
-	view.setIcon(QIcon(":/Resources/Icon.png"));
+	WindowFuncs windowFuncs(&cursor, mainWindow);
+	GuiHandler guiHandler(mainWindow);
 
-	WindowFunc windowFunc(&cursor, &view);
-	GuiHandler guiHandler(&view);
-	QQmlContext *context = view.rootContext();
-	context->setContextProperty("windowFunc", &windowFunc);
-	context->setContextProperty("guiHandler", &guiHandler);
-	context->setContextProperty("comboBoxModel", QStringList());
-	view.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
-
-	guiHandler.comboBox = view.rootObject()->findChild<QObject*>("presetComboBox");
-	guiHandler.bandsGroup = view.rootObject()->findChild<QObject*>("bandsGroup");
-
+	guiHandler.comboBox = mainWindow->findChild<QObject*>("presetComboBox");
+	guiHandler.bands = mainWindow->findChild<QObject*>("bands");
 	guiHandler.load();
 
-	QObject::connect(&app, SIGNAL(msgAvailable(QString)),
-					 &view, SLOT(on_receiveMsg(QString)));
+	QObject::connect(&app, &SingleApplication::msgAvailable,
+					 [mainWindow](){mainWindow->show();});
+	QObject::connect(mainWindow, SIGNAL(movePressed(int, int, int, int)),
+					 &windowFuncs, SLOT(beginMoveWindow(int,int,int,int)));
+	QObject::connect(mainWindow, SIGNAL(moveMoved(int, int)),
+					 &windowFuncs, SLOT(moveWindow(int,int)));
+	QObject::connect(mainWindow, SIGNAL(minimizeButtonClicked()),
+					 &windowFuncs, SLOT(minimizeWindow()));
+	QObject::connect(mainWindow, SIGNAL(closeButtonClicked()),
+					 &windowFuncs, SLOT(closeWindow()));
 
-	view.show();
+	QQuickItem *mainItem = mainWindow->findChild<QQuickItem*>("mainForm");
+	QObject::connect(mainItem, SIGNAL(powerButtonClicked(bool)),
+					 &guiHandler, SLOT(powerToggled(bool)));
+	QObject::connect(mainItem, SIGNAL(preampChanged(double)),
+					 &guiHandler, SLOT(preampChanged(double)));
+	QObject::connect(mainItem, SIGNAL(comboBoxIndexChanged(QString)),
+					 &guiHandler, SLOT(comboBoxChanged(QString)));
+	QObject::connect(mainItem, SIGNAL(resetButtonClicked()),
+					 &guiHandler, SLOT(resetButtonClicked()));
+	QObject::connect(mainItem, SIGNAL(saveButtonClicked()),
+					 &guiHandler, SLOT(saveButtonClicked()));
+	QObject::connect(mainItem, SIGNAL(deleteButtonClicked()),
+					 &guiHandler, SLOT(deleteButtonClicked()));
+	QObject::connect(mainItem, SIGNAL(bandChanged()),
+					 &guiHandler, SLOT(bandChanged()));
+
+	mainWindow->show();
 
 	return app.exec();
 }

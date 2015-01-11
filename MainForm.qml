@@ -3,6 +3,14 @@ import QtQuick.Controls 1.3
 
 Rectangle {
 	id: backdrop
+	signal powerButtonClicked(bool checked)
+	signal preampChanged(double value)
+	signal comboBoxIndexChanged(string text)
+	signal resetButtonClicked()
+	signal saveButtonClicked()
+	signal deleteButtonClicked()
+	signal bandChanged()
+	property color fontColor: "#ffffff"
 	width: 1056; height: 518
 	color: "#00000000"//"#3b3b3b"
 
@@ -18,20 +26,25 @@ Rectangle {
 
 		Button {
 			id: powerButton
+			objectName: "powerButton"
 			width: 40; height: 40
 			text: "Power"
+			checkable: true
+			checked: true
 			anchors.left: parent.left
 			anchors.leftMargin: 10
 			anchors.top: parent.top
 			anchors.topMargin: 10
 			z: 1
+
+			onClicked: backdrop.powerButtonClicked(powerButton.checked)
 		}
 
 		Label {
 			id: preampLabel
 			width: 60
 			height: 40
-			color: "#f6f6f6"
+			color: backdrop.fontColor
 			text: qsTr("Preamp:")
 			textFormat: Text.PlainText
 			font.pointSize: 10
@@ -48,6 +61,8 @@ Rectangle {
 
 		Slider {
 			id: preampSlider
+			objectName: "preampSlider"
+			property bool user: true
 			height: 22
 			stepSize: 0.1
 			orientation: Qt.Horizontal
@@ -62,15 +77,15 @@ Rectangle {
 			z: 1
 
 			onValueChanged: {
-				preampValue.user = false
+				preampSlider.user = false
 				preampValue.text = Math.round(preampSlider.value * 10) / 10
-				preampValue.user = true
+				backdrop.preampChanged(preampValue.text)
+				preampSlider.user = true
 			}
 		}
 
 		TextField {
 			id: preampValue
-			property bool user: true
 			width: 40; height: 20
 			text: "0"
 			font.pointSize: 8
@@ -82,7 +97,7 @@ Rectangle {
 			z: 1
 
 			onEditingFinished: {
-				if (preampValue.user){
+				if (preampSlider.user){
 					preampValue.text = Math.max(-30, Math.min(0, preampValue.text))
 					preampSlider.value = Math.round(preampValue.text * 10) / 10
 				}
@@ -92,7 +107,7 @@ Rectangle {
 		Label {
 			id: preampdBLabel
 			width: 20; height: 40
-			color: "#f6f6f6"
+			color: backdrop.fontColor
 			text: qsTr("dB")
 			textFormat: Text.PlainText
 			enabled: false
@@ -113,7 +128,7 @@ Rectangle {
 	Rectangle {
 		id: preampDivider
 		height: 1
-		color: "#f6f6f6"
+		color: backdrop.fontColor
 		anchors.top: preampGroup.bottom
 		anchors.topMargin: 0
 		anchors.right: parent.right
@@ -133,7 +148,7 @@ Rectangle {
 		Label {
 			id: presetLabel
 			height: 30
-			color: "#f6f6f6"
+			color: backdrop.fontColor
 			text: qsTr("Preset:")
 			textFormat: Text.PlainText
 			verticalAlignment: Text.AlignVCenter
@@ -156,6 +171,8 @@ Rectangle {
 			anchors.left: presetLabel.right
 			anchors.leftMargin: 10
 			z: 1
+
+			onCurrentIndexChanged: backdrop.comboBoxIndexChanged(presetComboBox.currentText)
 		}
 
 		Button {
@@ -166,6 +183,8 @@ Rectangle {
 			anchors.left: presetComboBox.right
 			anchors.leftMargin: 10
 			z: 1
+
+			onClicked: backdrop.resetButtonClicked()
 		}
 
 		Button {
@@ -176,6 +195,8 @@ Rectangle {
 			anchors.leftMargin: 10
 			anchors.verticalCenter: presetLabel.verticalCenter
 			z: 1
+
+			onClicked: backdrop.saveButtonClicked()
 		}
 
 		Button {
@@ -186,6 +207,8 @@ Rectangle {
 			anchors.leftMargin: 10
 			anchors.verticalCenter: presetLabel.verticalCenter
 			z: 1
+
+			onClicked: backdrop.deleteButtonClicked()
 		}
 	}
 
@@ -203,7 +226,7 @@ Rectangle {
 		Text {
 			id: levelLabel
 			x: 16
-			color: "#f6f6f6"
+			color: backdrop.fontColor
 			text: qsTr("Level (dB)")
 			verticalAlignment: Text.AlignVCenter
 			horizontalAlignment: Text.AlignHCenter
@@ -231,7 +254,7 @@ Rectangle {
 
 			Text {
 				id: maxdBLabel
-				color: "#f6f6f6"
+				color: backdrop.fontColor
 				text: qsTr("20 dB")
 				anchors.right: parent.right
 				anchors.rightMargin: 0
@@ -248,7 +271,7 @@ Rectangle {
 
 			Text {
 				id: neutraldBLabel
-				color: "#f6f6f6"
+				color: backdrop.fontColor
 				text: qsTr("0 dB")
 				anchors.right: parent.right
 				enabled: false
@@ -265,7 +288,7 @@ Rectangle {
 
 			Text {
 				id: mindBLabel
-				color: "#f6f6f6"
+				color: backdrop.fontColor
 				text: qsTr("-20 dB")
 				anchors.right: parent.right
 				enabled: false
@@ -283,7 +306,6 @@ Rectangle {
 
 		Row {
 			id: bandsGroup
-			objectName: "bandsGroup"
 			spacing: 8
 			anchors.bottom: frequencyLabel.top
 			anchors.bottomMargin: 10
@@ -295,9 +317,13 @@ Rectangle {
 			anchors.topMargin: 10
 
 			Repeater {
+				objectName: "bands"
 				model: 20
 				BandSliderForm {
 					bandNum: index
+
+					onVolumeChanged: backdrop.bandChanged()
+					onFreqChanged: backdrop.bandChanged()
 				}
 			}
 		}
@@ -306,7 +332,7 @@ Rectangle {
 			id: frequencyLabel
 			x: 25
 			y: 7
-			color: "#f6f6f6"
+			color: backdrop.fontColor
 			text: qsTr("Frequency (Hz)")
 			anchors.bottom: parent.bottom
 			anchors.bottomMargin: 0
