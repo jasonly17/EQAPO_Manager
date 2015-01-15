@@ -4,7 +4,6 @@ QT += core qml quick
 
 SOURCES += main.cpp \
     singleapplication.cpp \
-    mainview.cpp \
     guihandler.cpp \
 	equalizerfuncs.cpp \
     windowfuncs.cpp
@@ -20,7 +19,6 @@ include(deployment.pri)
 
 HEADERS += \
     singleapplication.h \
-    mainview.h \
     guihandler.h \
     equalizerfuncs.h \
     windowfuncs.h

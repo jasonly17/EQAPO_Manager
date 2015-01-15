@@ -1,13 +1,9 @@
-#include <QGuiApplication>
-#include <QCursor>
 #include <QQuickItem>
 #include <QQmlEngine>
 #include <QQmlComponent>
 #include <QQmlContext>
-#include <QDebug>
 
 #include "singleapplication.h"
-#include "mainview.h"
 #include "windowfuncs.h"
 #include "guihandler.h"
 
@@ -32,16 +28,18 @@ int main(int argc, char *argv[])
 	mainWindow->setFlags(Qt::Window | Qt::FramelessWindowHint);
 	mainWindow->setIcon(QIcon(":/Resources/Icon.png"));
 
-	QCursor cursor;
-	WindowFuncs windowFuncs(&cursor, mainWindow);
+	WindowFuncs windowFuncs(mainWindow);
 	GuiHandler guiHandler(mainWindow);
 
+	guiHandler.powerButton = mainWindow->findChild<QObject*>("powerButton");
+	guiHandler.preampSlider = mainWindow->findChild<QObject*>("preampSlider");
 	guiHandler.comboBox = mainWindow->findChild<QObject*>("presetComboBox");
 	guiHandler.bands = mainWindow->findChild<QObject*>("bands");
 	guiHandler.load();
 
 	QObject::connect(&app, &SingleApplication::msgAvailable,
 					 [mainWindow](){mainWindow->show();});
+
 	QObject::connect(mainWindow, SIGNAL(movePressed(int, int, int, int)),
 					 &windowFuncs, SLOT(beginMoveWindow(int,int,int,int)));
 	QObject::connect(mainWindow, SIGNAL(moveMoved(int, int)),
@@ -64,8 +62,8 @@ int main(int argc, char *argv[])
 					 &guiHandler, SLOT(saveButtonClicked()));
 	QObject::connect(mainItem, SIGNAL(deleteButtonClicked()),
 					 &guiHandler, SLOT(deleteButtonClicked()));
-	QObject::connect(mainItem, SIGNAL(bandChanged()),
-					 &guiHandler, SLOT(bandChanged()));
+	QObject::connect(mainItem, SIGNAL(bandChanged(int)),
+					 &guiHandler, SLOT(bandChanged(int)));
 
 	mainWindow->show();
 

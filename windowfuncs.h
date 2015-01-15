@@ -2,14 +2,13 @@
 #define WINDOWFUNCS_H
 
 #include <QObject>
-#include <QQuickView>
-#include <QCursor>
+#include <QQuickWindow>
 
 class WindowFuncs : public QObject
 {
 	Q_OBJECT
 public:
-	explicit WindowFuncs(QCursor *cursor, QQuickWindow *window, QObject *parent = 0);
+	explicit WindowFuncs(QQuickWindow *window, QObject *parent = 0);
 
 public slots:
 	void beginMoveWindow(int x, int y, int width, int height);
@@ -19,7 +18,6 @@ public slots:
 
 private:
 	QQuickWindow *window;
-	QCursor *cursor;
 	QPoint lastPos, dragDist;
 	QRect lastGeometry;
 };

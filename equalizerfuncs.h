@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QQuickWindow>
-#include <QQmlEngine>
 
 class EqualizerFuncs : public QObject
 {

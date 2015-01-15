@@ -1,7 +1,7 @@
 #include "windowfuncs.h"
 
-WindowFuncs::WindowFuncs(QCursor* cursor, QQuickWindow *window, QObject *parent) :
-	window(window), cursor(cursor), QObject(parent)
+WindowFuncs::WindowFuncs(QQuickWindow *window, QObject *parent) :
+	window(window), QObject(parent)
 {
 }
 

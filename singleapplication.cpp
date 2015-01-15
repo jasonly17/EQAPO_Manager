@@ -1,4 +1,5 @@
 #include "singleapplication.h"
+
 #include <QLocalSocket>
 #include <QDebug>
 

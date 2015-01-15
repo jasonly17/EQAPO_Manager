@@ -18,7 +18,7 @@ Item {
 
     TextField {
         id: volumeValue
-        text: "0.0"
+		text: "0"
         font.pointSize: 8
         font.family: "Verdana"
         anchors.right: parent.right
@@ -31,7 +31,6 @@ Item {
 
         onEditingFinished: {
 			if (volumeSlider.user){
-                volumeValue.text = Math.max(-20, Math.min(20, volumeValue.text))
                 volumeSlider.value = Math.round(volumeValue.text * 10) / 10
             }
         }
@@ -45,7 +44,7 @@ Item {
         width: 42; height: 300
         minimumValue: -20
         maximumValue: 20
-        stepSize: 0.5
+		stepSize: 0.1
         tickmarksEnabled: true
         orientation: Qt.Vertical
 
@@ -99,6 +98,6 @@ Item {
         anchors.bottomMargin: 0
         placeholderText: qsTr("")
 
-		onTextChanged: band.freqChanged()
+		onAccepted: {band.freqChanged()}
     }
 }

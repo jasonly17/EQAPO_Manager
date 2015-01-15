@@ -1,8 +1,7 @@
 #include "equalizerfuncs.h"
 
 #include <QFile>
-#include <QQuickItem>
-#include <QList>
+#include <QQmlComponent>
 #include <QDebug>
 
 EqualizerFuncs::EqualizerFuncs(QString *configPath, QObject *parent) :
@@ -157,6 +156,7 @@ bool EqualizerFuncs::changeConfig(double preamp, QString activeConfig)
 QMap<int, QList<double> > EqualizerFuncs::readEQFile(QString configName)
 {
 	QMap<int, QList<double> > settings;
+	double zeroFreq = 50000.0;
 	QFile file(configPath + "/" + configName + ".txt");
 	if (file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text)){
 		QTextStream in(&file);
@@ -167,8 +167,9 @@ QMap<int, QList<double> > EqualizerFuncs::readEQFile(QString configName)
 				QList<double> values;
 
 				if (contents.mid(15, 4) == "None"){
-					values.append(50000.0);
+					values.append(zeroFreq);
 					settings.insert(settings.count(), values);
+					zeroFreq++;
 				}
 				else {
 					QRegExp rx("\\s(\\-?\\d+,?.?\\d*)\\b");
@@ -219,11 +220,11 @@ void EqualizerFuncs::writeEQFile(QString configName, QMap<int, QList<double> > *
 			itr.next();
 			QString band;
 			if (itr.value().at(0) == 50000.0){
-				band = QString("Filter %1: ON  %2").arg(itr.key() + 1, 2).arg("None", -8);
+				band = QString("Filter %1: ON  %2").arg(itr.key(), 2).arg("None", -8);
 			}
 			else {
 				band = QString("Filter %1: ON  %2 Fc%3 Hz  Gain%4 dB  Q%5")
-						.arg(itr.key() + 1, 2).arg("PK", -8).arg(itr.value().at(0), 8)
+						.arg(itr.key(), 2).arg("PK", -8).arg(itr.value().at(0), 8)
 						.arg(itr.value().at(1), 6).arg("1.00", 6);
 			}
 			out << band << endl;
@@ -284,7 +285,6 @@ void EqualizerFuncs::okButtonClicked(int type, QString textInput, QString lastCo
 			dialog->deleteLater();
 			QFile oldFile(configPath + "/" + lastConfig.replace(" ", "_") + ".txt");
 			QFile newFile(configPath + "/" + textInput.replace(" ", "_") + ".txt");
-			qDebug() << lastConfig << textInput;
 			if (oldFile.exists()){
 				if (!newFile.exists()){
 					qDebug() << "save";

@@ -9,10 +9,10 @@ Rectangle {
 	signal resetButtonClicked()
 	signal saveButtonClicked()
 	signal deleteButtonClicked()
-	signal bandChanged()
+	signal bandChanged(int type)
 	property color fontColor: "#ffffff"
 	width: 1056; height: 518
-	color: "#00000000"//"#3b3b3b"
+	color: "#00000000"
 
 	Item {
 		id: preampGroup
@@ -322,8 +322,8 @@ Rectangle {
 				BandSliderForm {
 					bandNum: index
 
-					onVolumeChanged: backdrop.bandChanged()
-					onFreqChanged: backdrop.bandChanged()
+					onFreqChanged: backdrop.bandChanged(0)
+					onVolumeChanged: backdrop.bandChanged(1)
 				}
 			}
 		}
