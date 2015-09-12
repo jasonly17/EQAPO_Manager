@@ -1,11 +1,12 @@
 #ifndef SINGLEAPPLICATION_H
 #define SINGLEAPPLICATION_H
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QSharedMemory>
 #include <QLocalServer>
 
-class SingleApplication : public QGuiApplication
+class SingleApplication :
+		public QApplication
 {
 	Q_OBJECT
 public:
@@ -15,13 +16,13 @@ public:
 	bool sendMsg(const QString &message);
 
 public slots:
-	void on_receiveMsg();
+	void receiveMsg();
 
 signals:
 	void msgAvailable(QString msg);
 
 private:
-	bool running;
+	bool _isRunning;
 	QString uniqueKey;
 	QSharedMemory sharedMem;
 	QLocalServer *localServer;

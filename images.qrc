@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>Resources/CloseButton.png</file>
-        <file>Resources/MinimizeButton.png</file>
-        <file>Resources/Icon.png</file>
-    </qresource>
-</RCC>
