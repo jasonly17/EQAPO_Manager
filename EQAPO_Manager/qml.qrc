@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Preset.qml</file>
+        <file>PresetForm.ui.qml</file>
+        <file>EQControl.qml</file>
+        <file>EQControlForm.ui.qml</file>
+        <file>PowerButton.qml</file>
+        <file>PlainSpinBox.qml</file>
+        <file>Editor.qml</file>
+        <file>EditorForm.ui.qml</file>
+        <file>qmldir</file>
+        <file>Styles.qml</file>
+        <file>PresetComboBox.qml</file>
+        <file>EditorDelegate.qml</file>
+    </qresource>
+</RCC>
